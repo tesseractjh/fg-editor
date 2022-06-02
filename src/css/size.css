@@ -1,0 +1,56 @@
+.fg-editor {
+  --pc-height-content: 300px;
+  --pc-height-header: 68px;
+  --pc-min-height: 180px;
+  --pc-item: 70px;
+
+  --mobile-height-content: 140px;
+  --mobile-height-header: 55px;
+  --mobile-min-height: 100px;
+  --mobile-item: 54px;
+
+  --height-padding: 20px;
+  --min-width: 280px;
+  --code-line: 24px;
+  --dropdown-item: 30px;
+
+  --pc-height-inner: var(--pc-height-content);
+  --pc-height-inner-free-mode: calc(
+    var(--pc-height-content) + var(--pc-height-header)
+  );
+  --pc-height-outer: calc(var(--pc-height-content) + var(--height-padding) * 2);
+  --pc-height-outer-free-mode: calc(
+    var(--pc-height-outer) + var(--pc-height-header)
+  );
+  --mobile-height-inner: var(--mobile-height-content);
+  --mobile-height-inner-free-mode: calc(
+    var(--mobile-height-content) + var(--mobile-height-header)
+  );
+  --mobile-height-outer: calc(
+    var(--mobile-height-content) + var(--height-padding) * 2
+  );
+  --mobile-height-outer-free-mode: calc(
+    var(--mobile-height-outer) + var(--mobile-height-header)
+  );
+  --dropdown: calc(var(--dropdown-item) * 4);
+
+  --inner: var(--pc-height-inner);
+  --inner-free-mode: var(--pc-height-inner-free-mode);
+  --outer: var(--pc-height-outer);
+  --outer-free-mode: var(--pc-height-outer-free-mode);
+  --header: var(--pc-height-header);
+  --item: var(--pc-item);
+  --min-height: var(--pc-min-height);
+}
+
+@media screen and (max-width: 479px) {
+  .fg-editor {
+    --inner: var(--mobile-height-inner);
+    --inner-free-mode: var(--mobile-height-inner-free-mode);
+    --outer: var(--mobile-height-outer);
+    --outer-free-mode: var(--mobile-height-outer-free-mode);
+    --header: var(--mobile-height-header);
+    --item: var(--mobile-item);
+    --min-height: var(--mobile-min-height);
+  }
+}

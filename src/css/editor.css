@@ -1,0 +1,723 @@
+@keyframes mountItem {
+  0% {
+    transform: translateY(-10%);
+    background-color: var(--primary-4);
+  }
+
+  100% {
+    transform: translateY(0);
+    background-color: var(--primary-5);
+  }
+}
+
+.fg-editor {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+.fg-editor *,
+.fg-editor *::before,
+.fg-editor *::after {
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+.fg-editor .preview *,
+.fg-editor .preview *::before,
+.fg-editor .preview *::after {
+  transition: all 0.3s ease-in-out;
+}
+
+.fg-editor .preview,
+.fg-editor .code {
+  overflow: hidden;
+  width: calc(50% - 10px);
+  max-height: var(--outer);
+  background-color: var(--white);
+  box-shadow: 0px 4px 12px 0px var(--box-shadow-1);
+}
+
+.fg-editor.free-mode .preview,
+.fg-editor.free-mode .code {
+  max-height: var(--outer-free-mode);
+  border: 1px solid var(--gray-2);
+}
+
+.fg-editor .preview {
+  padding: var(--height-padding) 30px;
+  border-radius: 20px;
+}
+
+.fg-editor .wrapper-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: auto;
+  width: 100%;
+  max-height: var(--inner);
+  min-height: var(--min-height);
+  height: 100%;
+  padding: 5px;
+}
+
+.fg-editor.free-mode .wrapper-preview {
+  max-height: var(--inner-free-mode);
+  min-height: calc(var(--header) + var(--min-height));
+}
+
+.fg-editor .code {
+  display: block;
+  padding: var(--height-padding) 10px;
+  min-height: var(--min-height);
+  border-radius: 20px;
+  font-size: 16px;
+  color: var(--gray-6);
+}
+
+.fg-editor.snippet-mode .code {
+  user-select: none;
+}
+
+.fg-editor.free-mode .code {
+  padding: 0;
+}
+
+.fg-editor .header-code {
+  position: relative;
+  height: var(--header);
+}
+
+.fg-editor .header-code .title {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  height: var(--header);
+  padding-left: 32px;
+  border-bottom: 1px solid var(--gray-2);
+  font-size: 30px;
+  color: var(--gray-5);
+}
+
+.fg-editor .header-code .button-switch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  width: 85px;
+  height: calc(var(--header) + 1px);
+  border-bottom: 1px solid var(--gray-2);
+  background-color: var(--gray-1);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--gray-4);
+  user-select: none;
+}
+
+.fg-editor .header-code .button-left {
+  right: 85px;
+  border-left: 1px solid var(--gray-2);
+  border-top: 1px solid var(--gray-2);
+  border-top-left-radius: 20px;
+}
+
+.fg-editor .header-code .button-right {
+  right: 0px;
+  border-left: 1px solid var(--gray-2);
+}
+
+.fg-editor .header-code .button-switch.is-active {
+  border-bottom: 1px solid var(--white);
+  background-color: var(--white);
+  color: var(--primary-5);
+}
+
+.fg-editor .header-code .button-switch:hover,
+.fg-editor .header-code .button-switch.is-active:hover {
+  background-color: var(--primary-2);
+}
+
+.fg-editor .header-code .button-switch:active,
+.fg-editor .header-code .button-switch.is-active:active {
+  background-color: var(--primary-1);
+  color: var(--primary-5);
+}
+
+.fg-editor .wrapper-code {
+  overflow: auto;
+  width: 100%;
+  min-height: var(--min-height);
+}
+
+.fg-editor .inner-code {
+  max-height: var(--outer);
+  padding: var(--height-padding) 10px;
+}
+
+.fg-editor .code table {
+  display: block;
+  min-width: 100%;
+  width: max-content;
+  max-height: var(--inner);
+  padding: 2px 0;
+}
+
+.fg-editor .code table:focus {
+  outline: none;
+}
+
+.fg-editor.free-mode .code table {
+  cursor: text;
+}
+
+.fg-editor .code table.html-table {
+  user-select: none;
+  cursor: auto;
+}
+
+.fg-editor .wrapper-preview::-webkit-scrollbar,
+.fg-editor .wrapper-code::-webkit-scrollbar,
+.fg-editor .container::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.fg-editor .wrapper-preview::-webkit-scrollbar-thumb,
+.fg-editor .wrapper-code::-webkit-scrollbar-thumb,
+.fg-editor .container::-webkit-scrollbar-thumb {
+  width: 5px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: var(--gray-4);
+}
+
+.fg-editor .wrapper-preview::-webkit-scrollbar-track,
+.fg-editor .wrapper-code::-webkit-scrollbar-track,
+.fg-editor .container::-webkit-scrollbar-track {
+  background: none;
+}
+
+.fg-editor .container {
+  gap: 12px;
+}
+
+.fg-editor .container:not(.item):hover {
+  background-color: var(--primary-2);
+  transition: all 0.2s ease-in-out;
+}
+
+.fg-editor .item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--item);
+  height: var(--item);
+  padding: 10px;
+  border-radius: 15px;
+  background-color: var(--primary-5);
+  font-size: 22px;
+  color: var(--fixed-white);
+  user-select: none;
+  animation: mountItem 0.2s;
+}
+
+.fg-editor .item.container {
+  width: auto;
+  height: auto;
+  justify-content: normal;
+  align-items: normal;
+}
+
+.fg-editor .container .container .item {
+  outline: 2px solid var(--fixed-white);
+}
+
+.fg-editor .list-snippet {
+  width: 100%;
+}
+
+.fg-editor .list-snippet form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 30px;
+  width: 100%;
+}
+
+.fg-editor .input-snippet {
+  display: none;
+}
+
+.fg-editor .label-snippet {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: 14px;
+  color: var(--gray-4);
+  user-select: none;
+}
+
+.fg-editor .label-snippet::before {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border: 1px solid var(--gray-4);
+  border-radius: 50%;
+  content: '';
+}
+
+.fg-editor .label-snippet:hover,
+.fg-editor .label-snippet:hover::before {
+  border-color: var(--gray-6);
+  color: var(--gray-6);
+}
+
+.fg-editor .label-snippet::after {
+  display: inline-block;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  content: '';
+}
+
+.fg-editor .input-snippet:checked + .label-snippet {
+  color: var(--primary-5);
+}
+
+.fg-editor .input-snippet:checked + .label-snippet::before {
+  border-color: var(--primary-5);
+}
+
+.fg-editor .input-snippet:checked + .label-snippet::after {
+  background-color: var(--primary-5);
+}
+
+.fg-editor tr,
+.fg-editor input {
+  display: flex;
+  height: var(--code-line);
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+    Liberation Mono, monospace;
+  transition: none;
+  font-size: 16px;
+}
+
+.fg-editor tr {
+  position: relative;
+}
+
+.fg-editor tr:hover {
+  background-color: var(--primary-2);
+  color: var(--fixed-gray-6);
+}
+
+.fg-editor tr:hover .text-code {
+  color: var(--fixed-gray-6);
+}
+
+.fg-editor tr:hover .text-code:focus {
+  color: var(--gray-8);
+}
+
+.fg-editor tr:hover .button-delete,
+.fg-editor tr:hover .button-add {
+  display: inline;
+}
+
+.fg-editor tr .button-delete,
+.fg-editor tr .button-add {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--white);
+  text-align: center;
+  line-height: 20px;
+}
+
+.fg-editor tr .button-delete {
+  position: absolute;
+  top: 50%;
+  left: 30px;
+  transform: translateY(-50%);
+  background-color: var(--accent-3);
+}
+
+.fg-editor tr .button-delete:hover {
+  background-color: var(--accent-5);
+}
+
+.fg-editor tr .button-delete:active {
+  background-color: var(--accent-2);
+  color: var(--accent-5);
+}
+
+.fg-editor tr .button-add {
+  margin-left: 10px;
+  background-color: var(--primary-3);
+  vertical-align: text-top;
+}
+
+.fg-editor tr .button-add.button-inner {
+  margin: 0 5px;
+}
+
+.fg-editor tr .button-add:hover {
+  background-color: var(--primary-5);
+}
+
+.fg-editor tr .button-add:active {
+  background-color: var(--primary-2);
+  color: var(--primary-5);
+}
+
+.fg-editor tr .button-add-selector {
+  margin: 0;
+}
+
+.fg-editor tr .button-blank {
+  box-shadow: inset 0 0 3px 1px var(--box-shadow-2);
+}
+
+.fg-editor td {
+  padding: 0;
+}
+
+.fg-editor.free-mode td::selection,
+.fg-editor.free-mode td *::selection,
+.fg-editor.free-mode .textarea-code::selection {
+  background-color: var(--accent-3);
+}
+
+.fg-editor .number-line {
+  flex-shrink: 0;
+  width: 25px;
+  font-size: 12px;
+  color: var(--gray-4);
+  text-align: right;
+  line-height: var(--code-line);
+  user-select: none;
+}
+
+.fg-editor .code-line {
+  padding: 0 45px 0 30px;
+  line-height: var(--code-line);
+}
+
+.fg-editor.free-mode .code-line {
+  padding: 0 10px 0 30px;
+}
+
+.fg-editor .button-code {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  height: var(--code-line);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.fg-editor .button-code:hover {
+  box-shadow: 0 0 3px 1px var(--box-shadow-2);
+}
+
+.fg-editor .button-code:active {
+  box-shadow: inset 0 0 2px 1px var(--box-shadow-2);
+}
+
+.fg-editor td:hover .button-code:hover {
+  box-shadow: 0 0 3px 1px var(--fixed-box-shadow);
+}
+
+.fg-editor td:hover .button-code:active {
+  box-shadow: inset 0 0 2px 1px var(--fixed-box-shadow);
+}
+
+.fg-editor input.button-code {
+  padding: 0 3px;
+  cursor: auto;
+}
+
+.fg-editor input.button-code:focus {
+  background-color: var(--gray-2);
+  outline: none;
+}
+
+.fg-editor .button-code .dropdown {
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  top: var(--code-line);
+  left: 0;
+  z-index: 10;
+  max-height: var(--dropdown);
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: var(--primary-2);
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+    Liberation Mono, monospace;
+  color: var(--fixed-gray-8);
+  cursor: auto;
+}
+
+.fg-editor .button-code .dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+
+.fg-editor .button-code .dropdown::-webkit-scrollbar-thumb {
+  width: 5px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: var(--gray-4);
+}
+
+.fg-editor .button-code .dropdown::-webkit-scrollbar-track {
+  background: none;
+}
+
+.fg-editor .button-code .dropdown li {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  height: var(--dropdown-item);
+  padding: 0 10px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.fg-editor .button-code .dropdown li:hover {
+  background-color: var(--primary-3);
+}
+
+.fg-editor .selector-code,
+.fg-editor .attribute-code {
+  color: var(--accent-5);
+}
+
+.fg-editor.free-mode .selector-code::selection {
+  color: var(--primary-5);
+}
+
+.fg-editor .prop-code {
+  color: var(--four-color-1);
+}
+
+.fg-editor.free-mode .prop-code::selection {
+  color: var(--primary-6);
+}
+
+.fg-editor .value-code,
+.fg-editor .html-code {
+  color: var(--primary-5);
+}
+
+.fg-editor.free-mode .value-code::selection {
+  color: var(--white);
+}
+
+.fg-editor .attribute-value-code {
+  color: var(--primary-3);
+}
+
+.fg-editor .text-code {
+  display: inline-block;
+  color: var(--gray-8);
+  text-align: center;
+  line-height: var(--code-line);
+}
+
+.fg-editor .buttons {
+  width: 100%;
+}
+
+.fg-editor .buttons .button {
+  height: 41px;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+
+.fg-editor .buttons .button:hover {
+  box-shadow: 0 0 2px 2px var(--box-shadow-2);
+}
+
+.fg-editor .buttons .button:active {
+  box-shadow: inset 0 0 2px 2px var(--box-shadow-2);
+}
+
+.fg-editor .buttons .button-add {
+  margin-right: 12px;
+  background-color: var(--add-button-background);
+  color: var(--add-button-color);
+}
+
+.fg-editor .buttons .button-remove {
+  background-color: var(--remove-button-background);
+  color: var(--remove-button-color);
+}
+
+.fg-editor .wrapper-textarea {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  max-height: var(--inner);
+  padding: 2px 0;
+}
+
+.fg-editor .wrapper-textarea,
+.fg-editor .wrapper-textarea * {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+    Liberation Mono, monospace;
+}
+
+.fg-editor .container-number {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.fg-editor .textarea-code {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  padding: 0 0 0 30px;
+  font-size: 16px;
+  color: var(--gray-8);
+  line-height: var(--code-line);
+  resize: none;
+}
+
+.fg-editor .item.stressed,
+.fg-editor .container.stressed {
+  outline: 3px solid var(--primary-3) !important;
+  transition: outline 0.1s;
+}
+
+.fg-editor.carousel-layout {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.fg-editor.carousel-layout .preview {
+  overflow: visible;
+  max-height: none;
+  border: none;
+  background-color: var(--background);
+  box-shadow: none;
+}
+
+.fg-editor.carousel-layout .wrapper-preview {
+  overflow-x: auto;
+  overflow-y: visible;
+  max-height: none;
+}
+
+.fg-editor.carousel-layout .item:not(.container) {
+  width: auto;
+  height: auto;
+  padding: 40px;
+  border-radius: 40px;
+  box-shadow: 0px 6px 20px rgba(81, 69, 159, 0.1);
+}
+
+.fg-editor.carousel-layout.theme-grid .item:not(.container) {
+  box-shadow: 0px 4px 39px rgba(246, 134, 106, 0.09);
+}
+
+.fg-editor.carousel-layout .container:not(.item):hover {
+  background-color: transparent;
+}
+
+.fg-editor.carousel-layout .preview,
+.fg-editor.carousel-layout .code {
+  width: 100%;
+}
+
+.fg-editor .container-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  height: 14px;
+  margin: 20px 0 40px;
+}
+
+.fg-editor .container-indicators .indicator {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--background);
+  background-color: var(--indicator);
+  border-radius: 50%;
+}
+
+.fg-editor .container-indicators .indicator:hover {
+  background-color: var(--primary-5);
+}
+
+.fg-editor .container-indicators .indicator.selected {
+  border: none;
+  background-color: var(--gray-5);
+}
+
+@media screen and (max-width: 979px) {
+  .fg-editor {
+    flex-direction: column;
+  }
+
+  .fg-editor .preview,
+  .fg-editor .code {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .fg-editor {
+    align-items: center;
+  }
+
+  .fg-editor .item {
+    padding: 5px;
+    border-radius: 15px;
+    font-size: 22px;
+  }
+
+  .fg-editor .preview,
+  .fg-editor .code {
+    min-width: var(--min-width);
+  }
+
+  .fg-editor .preview {
+    padding: var(--height-padding) 17px;
+  }
+
+  .fg-editor .header-code .title {
+    padding-left: 20px;
+    font-size: 20px;
+  }
+
+  .fg-editor .header-code .button-switch {
+    width: 65px;
+    font-size: 14px;
+  }
+
+  .fg-editor .header-code .button-left {
+    right: 65px;
+  }
+
+  .fg-editor.carousel-layout .code,
+  .fg-editor.carousel-layout .container-indicators {
+    display: none;
+  }
+
+  .fg-editor.carousel-layout .item:not(.container) {
+    padding: 25px;
+  }
+}
