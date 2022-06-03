@@ -2215,8 +2215,7 @@ export default class Editor {
     }
 
     while (dom.children.length < tag.length) {
-      const newElem = document.createElement('div');
-      tag[dom.children.length].elem = newElem;
+      const newElem = tag[dom.children.length].elem;
       dom.appendChild(newElem);
     }
 
