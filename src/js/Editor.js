@@ -448,12 +448,17 @@ export default class Editor {
     const codes = this._editor.querySelectorAll('code');
     for (let i = 0; i < codes.length; i++) {
       const {
-        dataset: { snippet, item, struct, hidden },
+        dataset: { snippet, item, struct, hidden, hiddenText },
         textContent
       } = codes[i];
 
       if (hidden) {
         this._hiddenStylesheet = this._createStylesheet(textContent);
+        continue;
+      }
+
+      if (hiddenText) {
+        this._hiddenTexts = this._createTexts(textContent);
         continue;
       }
 
@@ -527,15 +532,15 @@ export default class Editor {
       this._previewWrapper.appendChild(container);
     });
 
+    if (this._hiddenStylesheet) {
+      this._hiddenStyle = document.createElement('style');
+      this._hiddenStyle.textContent = this._hiddenStylesheet;
+      this._preview.appendChild(this._hiddenStyle);
+    }
+
     if (this._mode === 'free') {
       this._style = document.createElement('style');
       this._style.textContent = this._curSnippet.stylesheet;
-      this._preview.appendChild(this._style);
-    }
-
-    if (this._hiddenStylesheet) {
-      this._style = document.createElement('style');
-      this._style.textContent = this._hiddenStylesheet;
       this._preview.appendChild(this._style);
     }
 
@@ -657,6 +662,13 @@ export default class Editor {
 
   // Create
   // ------------------------------------------------------------------------------
+
+  _createTexts(textContent) {
+    return textContent
+      .split('\n')
+      .map((text) => text.replace(/\s+/g, ' ').replace(/\\n/g, '\n').trim())
+      .filter(Boolean);
+  }
 
   _createCssCodeElements() {
     if (this._mode === 'snippet') {
@@ -1958,6 +1970,7 @@ export default class Editor {
     this._updateAllPreviewDOM();
     this._updateCssCode();
     this._updateHtmlCode();
+    this._updateFixedTextContents();
     if (this._mode === 'free') {
       this._style.textContent = this._curSnippet.stylesheet;
     }
@@ -1969,6 +1982,7 @@ export default class Editor {
     this._updatePreviewDOM();
     this._updateHtml();
     this._updatePreviewStyle();
+    this._updateFixedTextContents();
   }
 
   _removeItemClickEventListener() {
@@ -1978,6 +1992,7 @@ export default class Editor {
       this._updatePreviewDOM();
       this._updateHtml();
       this._updatePreviewStyle();
+      this._updateFixedTextContents();
     }
   }
 
@@ -2287,6 +2302,7 @@ export default class Editor {
     containers.forEach((container, index) => {
       container.classList.add(`container${index + 1}`);
     });
+    this._updateFixedTextContents();
   }
 
   // code 안에 table을 통째로 교체
@@ -2398,6 +2414,35 @@ export default class Editor {
     }
   }
 
+  _updateFixedTextContents() {
+    if (!this._hiddenTexts) {
+      return;
+    }
+    if (this._mode === 'snippet') {
+      const items = this._previewWrapper.querySelectorAll('.item');
+      this._hiddenTexts.forEach((text, index) => {
+        items[index].textContent = text;
+      });
+    } else if (this._mode === 'free') {
+      const stack = [...this._curHtml];
+      let count = this._hiddenTexts.length;
+      while (stack.length && count) {
+        const tag = stack.pop();
+        const index = Number(
+          [...tag.classList]
+            .find((cls) => /item\d+/.test(cls))
+            ?.replace(/item(\d+)/, '$1')
+        );
+        if (Number.isInteger(index)) {
+          tag.text = this._hiddenTexts[index - 1];
+          count--;
+        }
+        stack.push(...tag.children);
+      }
+      this._updateHtml();
+    }
+  }
+
   // _editor에 children을 순서대로 append
   _appendToEditor(children) {
     const fragment = document.createDocumentFragment();
@@ -2431,5 +2476,6 @@ export default class Editor {
     }
     this._updateHtml();
     this._updatePreviewStyle();
+    this._updateFixedTextContents();
   }
 }
