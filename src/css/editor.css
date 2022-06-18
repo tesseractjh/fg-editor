@@ -51,10 +51,6 @@
   border-radius: 20px;
 }
 
-.fg-editor.carousel-layout .preview {
-  background-color: transparent;
-}
-
 .fg-editor .wrapper-preview {
   overflow: auto;
   width: 100%;
@@ -632,7 +628,7 @@
   overflow: visible;
   max-height: none;
   border: none;
-  background-color: var(--background);
+  background-color: transparent;
   box-shadow: none;
 }
 
