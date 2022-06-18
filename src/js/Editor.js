@@ -39,7 +39,7 @@ export default class Editor {
     },
     {
       prop: 'align-items',
-      values: ['center', 'flex-end', 'flex-start', 'stretch']
+      values: ['baseline', 'center', 'flex-end', 'flex-start', 'stretch']
     },
     {
       prop: 'align-self',
@@ -391,16 +391,13 @@ export default class Editor {
     if (this._mode === 'snippet') {
       this._editor.classList.add('snippet-mode');
     } else if (this._mode === 'free') {
-      this._editor.classList.add('free-mode', `editor-${this._editorId}`);
+      this._editor.classList.add('free-mode');
     } else if (this._mode === 'carousel') {
       this._mode = 'free';
       this._layout = 'carousel';
-      this._editor.classList.add(
-        'free-mode',
-        `editor-${this._editorId}`,
-        'carousel-layout'
-      );
+      this._editor.classList.add('free-mode', 'carousel-layout');
     }
+    this._editor.classList.add(`editor-${this._editorId}`);
   }
 
   _initProps() {
@@ -449,7 +446,22 @@ export default class Editor {
 
   _initSnippets() {
     const codes = this._editor.querySelectorAll('code');
-    codes.forEach(({ dataset: { snippet, item, struct }, textContent }) => {
+    for (let i = 0; i < codes.length; i++) {
+      const {
+        dataset: { snippet, item, struct, hidden, hiddenText },
+        textContent
+      } = codes[i];
+
+      if (hidden) {
+        this._hiddenStylesheet = this._createStylesheet(textContent);
+        continue;
+      }
+
+      if (hiddenText) {
+        this._hiddenTexts = this._createTexts(textContent);
+        continue;
+      }
+
       let snippetName;
       if (this._mode === 'snippet' && !snippet) {
         snippetName = '제목없음';
@@ -484,7 +496,7 @@ export default class Editor {
         stylesheet,
         structure
       });
-    });
+    }
   }
 
   _initCurCss() {
@@ -502,8 +514,8 @@ export default class Editor {
   _initElements() {
     this._initPreview();
     this._initCode();
-    this._initSnippetList();
     if (this._mode === 'snippet') {
+      this._initSnippetList();
       this._initButtons();
     }
     if (this._layout === 'carousel') {
@@ -519,6 +531,12 @@ export default class Editor {
       container.render();
       this._previewWrapper.appendChild(container);
     });
+
+    if (this._hiddenStylesheet) {
+      this._hiddenStyle = document.createElement('style');
+      this._hiddenStyle.textContent = this._hiddenStylesheet;
+      this._preview.appendChild(this._hiddenStyle);
+    }
 
     if (this._mode === 'free') {
       this._style = document.createElement('style');
@@ -552,6 +570,9 @@ export default class Editor {
   }
 
   _initSnippetList() {
+    if (this._snippets.length === 1) {
+      return null;
+    }
     this._snippetList = new Tag({ className: 'list-snippet' });
     const form = document.createElement('form');
 
@@ -585,6 +606,12 @@ export default class Editor {
   }
 
   _initButtons() {
+    const {
+      dataset: { hideButtons }
+    } = this._editor;
+    if (hideButtons) {
+      return null;
+    }
     this._buttons = new Tag({ className: 'buttons' });
 
     const addButton = Tag.createElement(
@@ -641,6 +668,13 @@ export default class Editor {
 
   // Create
   // ------------------------------------------------------------------------------
+
+  _createTexts(textContent) {
+    return textContent
+      .split('\n')
+      .map((text) => text.replace(/\s+/g, ' ').replace(/\\n/g, '\n').trim())
+      .filter(Boolean);
+  }
 
   _createCssCodeElements() {
     if (this._mode === 'snippet') {
@@ -1942,6 +1976,7 @@ export default class Editor {
     this._updateAllPreviewDOM();
     this._updateCssCode();
     this._updateHtmlCode();
+    this._updateFixedTextContents();
     if (this._mode === 'free') {
       this._style.textContent = this._curSnippet.stylesheet;
     }
@@ -1953,6 +1988,7 @@ export default class Editor {
     this._updatePreviewDOM();
     this._updateHtml();
     this._updatePreviewStyle();
+    this._updateFixedTextContents();
   }
 
   _removeItemClickEventListener() {
@@ -1962,6 +1998,7 @@ export default class Editor {
       this._updatePreviewDOM();
       this._updateHtml();
       this._updatePreviewStyle();
+      this._updateFixedTextContents();
     }
   }
 
@@ -2271,6 +2308,7 @@ export default class Editor {
     containers.forEach((container, index) => {
       container.classList.add(`container${index + 1}`);
     });
+    this._updateFixedTextContents();
   }
 
   // code 안에 table을 통째로 교체
@@ -2382,10 +2420,43 @@ export default class Editor {
     }
   }
 
+  _updateFixedTextContents() {
+    if (!this._hiddenTexts) {
+      return;
+    }
+    if (this._mode === 'snippet') {
+      const items = this._previewWrapper.querySelectorAll('.item');
+      this._hiddenTexts.forEach((text, index) => {
+        items[index].textContent = text;
+      });
+    } else if (this._mode === 'free') {
+      const stack = [...this._curHtml];
+      let count = this._hiddenTexts.length;
+      while (stack.length && count) {
+        const tag = stack.pop();
+        const index = Number(
+          [...tag.classList]
+            .find((cls) => /item\d+/.test(cls))
+            ?.replace(/item(\d+)/, '$1')
+        );
+        if (Number.isInteger(index)) {
+          tag.text = this._hiddenTexts[index - 1];
+          count--;
+        }
+        stack.push(...tag.children);
+      }
+      this._updateHtml();
+    }
+  }
+
   // _editor에 children을 순서대로 append
   _appendToEditor(children) {
     const fragment = document.createDocumentFragment();
-    children.forEach((child) => fragment.appendChild(child.elem));
+    children.forEach((child) => {
+      if (child?.elem) {
+        fragment.appendChild(child.elem);
+      }
+    });
     this._editor.appendChild(fragment);
   }
 
@@ -2411,5 +2482,6 @@ export default class Editor {
     }
     this._updateHtml();
     this._updatePreviewStyle();
+    this._updateFixedTextContents();
   }
 }
