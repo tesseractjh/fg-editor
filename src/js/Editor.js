@@ -39,7 +39,7 @@ export default class Editor {
     },
     {
       prop: 'align-items',
-      values: ['center', 'flex-end', 'flex-start', 'stretch']
+      values: ['baseline', 'center', 'flex-end', 'flex-start', 'stretch']
     },
     {
       prop: 'align-self',
