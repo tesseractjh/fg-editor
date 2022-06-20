@@ -1790,7 +1790,8 @@ export default class Editor {
           .map((selector) => selector.trim());
         const rest = match
           .slice(index)
-          .replace(/((?<=[{}:;])\s+)|(\s+(?=[{}:;]))/g, '');
+          .replace(/([{}:;])(\s+)/g, '$1')
+          .replace(/(\s+)(?=[{}:;])/g, '');
         return (
           selectors
             .map(
