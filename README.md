@@ -1,6 +1,10 @@
 # fg-editor
 Flex &amp; Grid 웹 페이지에서 사용된 에디터 컴포넌트를 CDN으로 배포하기 위해 별도의 Repo로 분리하였습니다.
 
+🚀 배포: https://flexngrid.com/
+
+🔗 원본 레포: https://github.com/flexandgrid/flexandgrid
+
 ## CDN
 ```html
 <script src="https://cdn.jsdelivr.net/gh/tesseractjh/fg-editor@main/dist/fg-editor.min.js"></script>
